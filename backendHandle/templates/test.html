@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change URL with Fetch</title>
+</head>
+<body>
+
+
+    <h1>Change URL with Multiple Inputs</h1>
+
+    <!-- Multiple input fields -->
+    <input type="text" id="latitude" placeholder="Enter latitude">
+    <input type="text" id="longitude" placeholder="Enter longitude">
+    <button onclick="changeUrl()">Find Fire Probability</button>
+
+<script>
+        window.onload = function() {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        };
+
+        function changeUrl() {
+            const latitude = document.getElementById("latitude").value;
+            const longitude = document.getElementById("longitude").value;
+
+            const queryParams = `?latitude=${latitude}&longitude=${longitude}`;        
+
+            if (queryParams.endsWith('&')) {
+                queryParams = queryParams.slice(0, -1);
+            }
+            window.history.pushState({}, '', `?${queryParams}`);
+            fetch(`/update-location/?${queryParams}`, {
+                method: 'POST',  
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ latitude: latitude, longitude: longitude })  
+            })
+            .then(response => response.json())  
+            .then(data => {
+                console.log('Backend response:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+
+</script>        
+
+
+</body>
